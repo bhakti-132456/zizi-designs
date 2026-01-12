@@ -1,6 +1,6 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import { products, getProductBySlug } from '../data/products';
-import { motion, useScroll, useTransform, useSpring, MotionValue } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { ArrowUpRight, ArrowDown } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 
@@ -8,7 +8,6 @@ interface FullCollectionProps {
   onNavigateProduct?: (slug: string) => void;
 }
 
-// Image mapping for Collection Page specific assets
 // Section Configuration: Backgrounds, Alignment, and Theme
 const SECTION_CONFIG: Record<string, {
   desktop: string;
@@ -56,7 +55,7 @@ const SECTION_CONFIG: Record<string, {
     desktop: '/zizi-webp/reginald.webp',
     mobile: '/zizi-webp/reginald-mobile.webp',
     alignment: 'right',
-    theme: 'light' // Lighter background, dark text
+    theme: 'light'
   }
 };
 
@@ -71,47 +70,57 @@ const PRODUCT_DESCRIPTIONS: Record<string, string> = {
   'fortnum-reginald': 'London heritage embodied in the crown jewel of the collection.'
 };
 
-// Helper not needed with new config approach, but keeping if other parts use it, otherwise ignoring
-const getDisplayImage = (slug: string, fallbackImages: string[]) => {
-  return fallbackImages[0];
+// Animation variants for staggered reveals
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.2,
+      delayChildren: 0.15
+    }
+  }
 };
 
-// --- CURTAIN COMPONENT ---
-interface CurtainProps {
-  children: React.ReactNode;
-  zIndex: number;
-  progress: MotionValue<number>;
-  range: [number, number];
-  className?: string;
-}
+const itemVariants = {
+  hidden: { opacity: 0, y: 50 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 1.0,
+      ease: [0.16, 1, 0.3, 1]
+    }
+  }
+};
 
-const Curtain: React.FC<CurtainProps> = ({ children, zIndex, progress, range, className = "" }) => {
-  const exitRange = [range[1], range[1] + 0.1];
+// Slide from side animation variants
+const slideFromLeft = {
+  hidden: { opacity: 0, x: -100 },
+  visible: {
+    opacity: 1,
+    x: 0,
+    transition: {
+      duration: 1.2,
+      ease: [0.16, 1, 0.3, 1]
+    }
+  }
+};
 
-  const scale = useTransform(progress, exitRange, [1, 0.95]);
-  const opacity = useTransform(progress, exitRange, [1, 0.5]);
-  const brightness = useTransform(progress, exitRange, [1, 0.4]);
-
-  return (
-    <motion.div
-      style={{
-        scale,
-        opacity,
-        filter: useTransform(brightness, b => `brightness(${b})`),
-        zIndex
-      }}
-      className={`sticky top-0 h-[100dvh] w-full overflow-hidden flex flex-col ${className}`}
-    >
-      {children}
-    </motion.div>
-  );
+const slideFromRight = {
+  hidden: { opacity: 0, x: 100 },
+  visible: {
+    opacity: 1,
+    x: 0,
+    transition: {
+      duration: 1.2,
+      ease: [0.16, 1, 0.3, 1]
+    }
+  }
 };
 
 const FullCollection: React.FC<FullCollectionProps> = ({ onNavigateProduct }) => {
-  const containerRef = useRef<HTMLDivElement>(null);
   const { addItem } = useCart();
-  const { scrollYProgress } = useScroll({ target: containerRef });
-  const smoothProgress = useSpring(scrollYProgress, { damping: 20, stiffness: 100 });
 
   const handleNavigate = (slug: string) => {
     if (onNavigateProduct) onNavigateProduct(slug);
@@ -121,9 +130,7 @@ const FullCollection: React.FC<FullCollectionProps> = ({ onNavigateProduct }) =>
     e.stopPropagation();
     const productData = getProductBySlug(slug);
     if (productData) {
-      // Parse price (remove £ and convert to number)
       const priceNumber = parseInt(productData.price.replace(/[^0-9]/g, ''), 10);
-
       addItem({
         id: productData.id.toString(),
         name: productData.title,
@@ -134,26 +141,20 @@ const FullCollection: React.FC<FullCollectionProps> = ({ onNavigateProduct }) =>
     }
   };
 
-  // Total sections = 1 (Hero) + number of products
-  const totalSections = 1 + products.length;
-  const step = 1 / totalSections;
-
-  // Hero scroll transforms (hooks must be at top level)
-  const heroSubtitleY = useTransform(smoothProgress, [0, step], [0, -100]);
-  const heroSubtitleOpacity = useTransform(smoothProgress, [0, step * 0.5], [1, 0]);
-  const heroTitleY = useTransform(smoothProgress, [0, step], [0, -200]);
-  const heroTitleScale = useTransform(smoothProgress, [0, step], [1, 0.5]);
-  const heroTitleOpacity = useTransform(smoothProgress, [0, step * 0.8], [1, 0]);
-
   return (
-    <div ref={containerRef} className="bg-black relative" style={{ height: `${totalSections * 100}vh` }}>
+    <div className="bg-black relative">
 
-      {/* === HERO SECTION: GENESIS (Z-0) === */}
-      <Curtain zIndex={0} progress={smoothProgress} range={[0, step]}>
+      {/* === HERO SECTION: COLLECTION === */}
+      <motion.section
+        className="relative h-[100dvh] w-full overflow-hidden"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1 }}
+      >
         <div className="absolute inset-0">
           <img
             src="/zizi-webp/collection_hero_bg_symbolic_turtle_16x9.webp"
-            alt="Genesis Collection"
+            alt="Collection"
             className="w-full h-full object-cover opacity-90"
             loading="eager"
           />
@@ -162,120 +163,145 @@ const FullCollection: React.FC<FullCollectionProps> = ({ onNavigateProduct }) =>
         <div className="relative z-10 w-full h-full flex flex-col items-center justify-center text-white text-center px-6">
           <motion.p
             className="text-xs md:text-sm font-bold tracking-[0.4em] uppercase mb-8 text-white/90 drop-shadow-md"
-            style={{
-              y: heroSubtitleY,
-              opacity: heroSubtitleOpacity
-            }}
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
           >
-            The Spring 2025 Collection
+            The Complete Archive
           </motion.p>
           <motion.h1
             className="text-[12vw] md:text-[15vw] font-serif leading-none tracking-tighter text-white drop-shadow-2xl"
-            style={{
-              y: heroTitleY,
-              scale: heroTitleScale,
-              opacity: heroTitleOpacity
-            }}
+            initial={{ opacity: 0, y: 50, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 1, delay: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
           >
-            GENESIS
+            COLLECTION
           </motion.h1>
-          <div className="absolute bottom-12 animate-bounce">
-            <ArrowDown className="text-white/70 w-8 h-8" />
-          </div>
+          <motion.div
+            className="absolute bottom-12"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.2 }}
+          >
+            <ArrowDown className="text-white/70 w-8 h-8 animate-bounce" />
+          </motion.div>
         </div>
-      </Curtain>
+      </motion.section>
 
-      {/* === PRODUCT SECTIONS (Z-1 onwards) === */}
+      {/* === PRODUCT SECTIONS - Card Scroll with Parallax === */}
       {products.map((product, index) => {
-        const panelIndex = index + 1; // Offset by 1 because Hero is first
-        const range: [number, number] = [panelIndex * step, (panelIndex + 1) * step];
-        // const displayImage = getDisplayImage(product.slug, product.images); // No longer needed
         const description = PRODUCT_DESCRIPTIONS[product.slug] || 'A masterpiece of craftsmanship.';
         const config = SECTION_CONFIG[product.slug];
-        const isRightAligned = config?.alignment === 'right'; // Default to left if undefined
+        const isRightAligned = config?.alignment === 'right';
         const isLightMode = config?.theme === 'light';
         const textColorClass = isLightMode ? 'text-black' : 'text-white';
 
+        // Alternate animation direction for visual interest
+        const slideVariant = isRightAligned ? slideFromRight : slideFromLeft;
+
         return (
-          <Curtain
+          <motion.section
             key={product.id}
-            zIndex={panelIndex}
-            progress={smoothProgress}
-            range={range}
-            className="bg-black"
+            className="relative min-h-[100dvh] w-full overflow-hidden bg-black"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.2 }}
+            variants={containerVariants}
           >
-            {/* Background Images - No Overlay */}
-            <div className="absolute inset-0 z-0 overflow-hidden group">
+            {/* Background Images with Parallax Effect */}
+            <motion.div
+              className="absolute inset-0 z-0 overflow-hidden"
+              initial={{ scale: 1.1 }}
+              whileInView={{ scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 1.2, ease: [0.25, 0.1, 0.25, 1] }}
+            >
               {config && (
                 <>
                   <motion.img
-                    whileHover={{ scale: 1.05 }}
-                    transition={{ duration: 4, ease: "easeInOut", repeat: Infinity, repeatType: "reverse" }}
                     src={config.desktop}
                     alt={`${product.title} Background`}
                     className="hidden md:block w-full h-full object-cover origin-center"
+                    whileHover={{ scale: 1.02 }}
+                    transition={{ duration: 0.6 }}
                   />
                   <motion.img
-                    whileHover={{ scale: 1.05 }}
-                    transition={{ duration: 4, ease: "easeInOut", repeat: Infinity, repeatType: "reverse" }}
                     src={config.mobile}
                     alt={`${product.title} Background`}
                     className="block md:hidden w-full h-full object-cover object-top origin-top"
                   />
                 </>
               )}
-            </div>
+            </motion.div>
 
             {/* Content Layout */}
             <div className={`relative z-10 w-full min-h-[100dvh] flex flex-col md:flex-row p-6 md:p-12 lg:p-16 ${isRightAligned ? 'md:justify-end' : 'md:justify-start'} justify-center`}>
 
-              {/* Text Container */}
-              <div className="md:w-1/3 flex flex-col justify-center mt-20 md:mt-0">
+              {/* Text Container - Animate from sides */}
+              <motion.div
+                className="md:w-1/3 flex flex-col justify-center mt-20 md:mt-0"
+                variants={slideVariant}
+              >
                 <motion.div
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, delay: 0.2 }}
                   className="max-w-lg"
+                  variants={itemVariants}
                 >
-                  {/* Reduced text-8xl to text-7xl to prevent overflow on smaller laptops */}
-                  <h2 className={`text-5xl md:text-6xl lg:text-7xl font-serif mb-4 leading-[0.9] ${textColorClass}`}>
+                  <motion.h2
+                    className={`text-5xl md:text-6xl lg:text-7xl font-serif mb-4 leading-[0.9] ${textColorClass}`}
+                    variants={itemVariants}
+                  >
                     {product.title}
-                  </h2>
+                  </motion.h2>
 
-                  <p className={`text-2xl md:text-3xl font-serif italic mb-4 ${textColorClass} opacity-80`}>
+                  <motion.p
+                    className={`text-2xl md:text-3xl font-serif italic mb-4 ${textColorClass} opacity-80`}
+                    variants={itemVariants}
+                  >
                     {product.price}
-                  </p>
+                  </motion.p>
 
-                  <p className={`text-sm md:text-base font-sans leading-relaxed mb-6 max-w-md ${textColorClass} opacity-70`}>
+                  <motion.p
+                    className={`text-sm md:text-base font-sans leading-relaxed mb-6 max-w-md ${textColorClass} opacity-70`}
+                    variants={itemVariants}
+                  >
                     {description}
-                  </p>
+                  </motion.p>
 
-                  <button
+                  <motion.button
                     onClick={() => handleNavigate(product.slug)}
                     className={`block w-fit mb-8 text-[10px] font-bold uppercase tracking-[0.2em] border-b pb-1 transition-all ${isLightMode ? 'border-black/30 hover:border-black text-black' : 'border-white/30 hover:border-white text-white'}`}
+                    variants={itemVariants}
+                    whileHover={{ x: 5 }}
+                    transition={{ duration: 0.2 }}
                   >
                     More Details
-                  </button>
+                  </motion.button>
 
-                  <div className="flex flex-wrap items-center gap-6">
-                    <button
+                  <motion.div
+                    className="flex flex-wrap items-center gap-6"
+                    variants={itemVariants}
+                  >
+                    <motion.button
                       onClick={(e) => handleAddToCart(e, product.slug)}
                       className={`px-8 py-3 text-xs font-bold tracking-[0.15em] uppercase transition-colors rounded-full shadow-lg ${isLightMode ? 'bg-black text-white hover:bg-gray-800' : 'bg-white text-black hover:bg-gray-200'}`}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
                     >
                       Add to Cart
-                    </button>
-                    <button
+                    </motion.button>
+                    <motion.button
                       onClick={() => handleNavigate(product.slug)}
                       className={`transition-colors uppercase text-xs font-bold tracking-[0.15em] flex items-center gap-2 ${textColorClass} hover:opacity-100 opacity-60`}
+                      whileHover={{ x: 5 }}
                     >
                       Buy Now <ArrowUpRight className="w-4 h-4" />
-                    </button>
-                  </div>
+                    </motion.button>
+                  </motion.div>
                 </motion.div>
-              </div>
+              </motion.div>
 
             </div>
-          </Curtain>
+          </motion.section>
         );
       })}
 

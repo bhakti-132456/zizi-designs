@@ -10,6 +10,8 @@ import InstagramArchive from './components/InstagramArchive';
 import { getProductBySlug } from './data/products';
 import { CartProvider } from './context/CartContext';
 import SmoothScroll from './components/SmoothScroll';
+import ParallaxReveal from './components/ParallaxReveal';
+import CardScrollSection from './components/CardScrollSection';
 
 // Lazy-loaded heavy components for code splitting
 const FullCollection = lazy(() => import('./components/FullCollection'));
@@ -183,27 +185,66 @@ export default function App() {
           {/* --- VIEW ROUTING --- */}
           {currentView === 'home' ? (
             <main className="relative">
-              <div className="sticky top-0 z-10 h-[100dvh] w-full overflow-hidden" data-section-name="The Beginning" data-theme="dark">
-                <Hero onNavigateProduct={navigateToProduct} />
-              </div>
-              <div className="sticky top-0 z-20 h-[100dvh] w-full overflow-hidden bg-white" data-section-name="Spring Collection" data-theme="light">
-                <FeaturedCollection onNavigateProduct={navigateToProduct} />
-              </div>
-              <div className="sticky top-0 z-30 h-[100dvh] w-full overflow-hidden bg-[#f4f4f4]" data-section-name="Our Philosophy" data-theme="light">
-                <AboutSection />
-              </div>
-              <div className="sticky top-0 z-40 h-[100dvh] w-full overflow-hidden bg-[#fbfaf8]" data-section-name="Voices" data-theme="light">
-                <Testimonials />
-              </div>
-              <div className="sticky top-0 z-[45] h-[100dvh] w-full overflow-hidden bg-[#f4f4f4]" data-section-name="Archive" data-theme="light">
-                <InstagramArchive />
-              </div>
-              <div className="sticky top-0 z-50 h-[100dvh] w-full overflow-hidden bg-black" data-section-name="Join Us" data-theme="dark">
-                <Newsletter />
-              </div>
-              <div className="sticky top-0 z-[60] h-[100dvh] w-full overflow-hidden bg-[#050505]" data-section-name="Connect" data-theme="dark">
-                <Footer />
-              </div>
+              {/* Hero Section - Full viewport with parallax background */}
+              <CardScrollSection index={0} className="min-h-[100dvh]">
+                <div className="h-[100dvh] w-full overflow-hidden" data-section-name="The Beginning" data-theme="dark">
+                  <Hero onNavigateProduct={navigateToProduct} />
+                </div>
+              </CardScrollSection>
+
+              {/* Featured Collection - Cards animate from left */}
+              <CardScrollSection index={1} className="min-h-[100dvh] bg-white">
+                <ParallaxReveal direction="left" offset={80}>
+                  <div className="h-[100dvh] w-full overflow-hidden" data-section-name="Featured" data-theme="light">
+                    <FeaturedCollection onNavigateProduct={navigateToProduct} />
+                  </div>
+                </ParallaxReveal>
+              </CardScrollSection>
+
+              {/* About Section - Content animates from right */}
+              <CardScrollSection index={2} className="min-h-[100dvh] bg-[#f4f4f4]">
+                <ParallaxReveal direction="right" offset={80}>
+                  <div className="h-[100dvh] w-full overflow-hidden" data-section-name="Our Philosophy" data-theme="light">
+                    <AboutSection />
+                  </div>
+                </ParallaxReveal>
+              </CardScrollSection>
+
+              {/* Testimonials - Animate from left */}
+              <CardScrollSection index={3} className="min-h-[100dvh] bg-[#fbfaf8]">
+                <ParallaxReveal direction="left" offset={60}>
+                  <div className="h-[100dvh] w-full overflow-hidden" data-section-name="Voices" data-theme="light">
+                    <Testimonials />
+                  </div>
+                </ParallaxReveal>
+              </CardScrollSection>
+
+              {/* Instagram Archive - Animate from right */}
+              <CardScrollSection index={4} className="min-h-[100dvh] bg-[#f4f4f4]">
+                <ParallaxReveal direction="right" offset={60}>
+                  <div className="h-[100dvh] w-full overflow-hidden" data-section-name="Archive" data-theme="light">
+                    <InstagramArchive />
+                  </div>
+                </ParallaxReveal>
+              </CardScrollSection>
+
+              {/* Newsletter - Animate from left */}
+              <CardScrollSection index={5} className="min-h-[100dvh] bg-black">
+                <ParallaxReveal direction="left" offset={60}>
+                  <div className="h-[100dvh] w-full overflow-hidden" data-section-name="Join Us" data-theme="dark">
+                    <Newsletter />
+                  </div>
+                </ParallaxReveal>
+              </CardScrollSection>
+
+              {/* Footer - Animate up */}
+              <CardScrollSection index={6} className="min-h-[100dvh] bg-[#050505]">
+                <ParallaxReveal direction="up" offset={40}>
+                  <div className="h-[100dvh] w-full overflow-hidden" data-section-name="Connect" data-theme="dark">
+                    <Footer />
+                  </div>
+                </ParallaxReveal>
+              </CardScrollSection>
             </main>
           ) : (
             <div className="pt-20">

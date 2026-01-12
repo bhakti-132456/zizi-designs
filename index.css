@@ -23,6 +23,29 @@ body {
   background-color: #fcfcfc;
 }
 
+/* Scroll Animation Custom Properties - Cinematic Slow */
+:root {
+  --scroll-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --reveal-duration: 1.2s;
+  --parallax-speed: 0.15;
+}
+
+/* Card Scroll Section Styles */
+.card-section {
+  transform-origin: center center;
+  will-change: transform, opacity;
+}
+
+/* Parallax Reveal Utilities */
+.parallax-reveal {
+  will-change: transform, opacity;
+}
+
+/* Smooth transition utilities */
+.transition-luxury {
+  transition: all var(--reveal-duration) var(--scroll-ease);
+}
+
 /* Custom Typography - Ornate & Modern mix */
 h1,
 h2,

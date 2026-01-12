@@ -68,7 +68,7 @@ const FeaturedCollection: React.FC<FeaturedCollectionProps> = ({ onNavigateProdu
         <div className="flex justify-between items-end mb-8 md:mb-16 border-b border-black/5 pb-6">
           <div className="flex flex-col">
             <span className="text-xs font-bold tracking-[0.3em] uppercase text-gray-400 mb-2">Curated Selection</span>
-            <h2 className="text-4xl md:text-5xl font-serif text-black">Spring 2025</h2>
+            <h2 className="text-4xl md:text-5xl font-serif text-black">Featured</h2>
           </div>
           <button className="hidden md:flex items-center gap-2 group cursor-pointer">
             <span className="text-xs font-bold tracking-[0.2em] uppercase group-hover:opacity-50 transition-opacity">View Index</span>
