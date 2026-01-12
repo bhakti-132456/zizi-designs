@@ -6,8 +6,8 @@ import { useSession, signIn, signOut } from 'next-auth/react';
 
 interface NavbarProps {
   theme: 'dark' | 'light';
-  onNavigate: (view: 'home' | 'collection' | 'inspiration' | 'about' | 'cart') => void;
-  currentView: 'home' | 'collection' | 'inspiration' | 'about' | 'cart';
+  onNavigate: (view: 'home' | 'collection' | 'about' | 'cart') => void;
+  currentView: 'home' | 'collection' | 'about' | 'cart';
   isLogoDocked?: boolean;
 }
 
@@ -26,7 +26,7 @@ const Navbar: React.FC<NavbarProps> = ({ theme, onNavigate, currentView, isLogoD
     ? 'bg-black/60 border-b border-white/5'
     : 'bg-white/70 border-b border-black/5';
 
-  const handleLinkClick = (view: 'home' | 'collection' | 'inspiration' | 'about' | 'cart') => {
+  const handleLinkClick = (view: 'home' | 'collection' | 'about' | 'cart') => {
     setIsMobileMenuOpen(false);
     onNavigate(view);
   };
@@ -66,12 +66,6 @@ const Navbar: React.FC<NavbarProps> = ({ theme, onNavigate, currentView, isLogoD
             className={`${mutedColor} ${hoverColor} text-[11px] font-bold uppercase tracking-[0.15em] transition-colors`}
           >
             Collection
-          </button>
-          <button
-            onClick={() => handleLinkClick('inspiration')}
-            className={`${mutedColor} ${hoverColor} text-[11px] font-bold uppercase tracking-[0.15em] transition-colors`}
-          >
-            Inspiration
           </button>
           <button
             onClick={() => handleLinkClick('about')}
@@ -191,7 +185,6 @@ const Navbar: React.FC<NavbarProps> = ({ theme, onNavigate, currentView, isLogoD
               <div className="flex flex-col items-center space-y-6">
                 {[
                   { label: 'Collection', view: 'collection' },
-                  { label: 'Inspiration', view: 'inspiration' },
                   { label: 'About', view: 'about' }
                 ].map((item) => (
                   <motion.button

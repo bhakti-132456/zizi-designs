@@ -1,7 +1,7 @@
 import React from 'react';
 
 const AboutSection: React.FC = () => {
-  const aboutImage = "https://images.unsplash.com/photo-1581447109200-bf2769116351?q=80&w=1000&auto=format&fit=crop";
+  const aboutImage = "/about-philosophy.jpg";
 
   return (
     <section className="h-full w-full bg-[#f4f4f4] relative overflow-hidden flex flex-col">
@@ -12,8 +12,8 @@ const AboutSection: React.FC = () => {
           <div className="w-full md:w-1/2 relative aspect-square md:aspect-[4/5] max-h-[50vh] md:max-h-[70vh] overflow-hidden group flex-shrink-0">
             <img
               src={aboutImage}
-              alt="The Artisan Process"
-              className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700 ease-in-out"
+              alt="Our Philosophy"
+              className="w-full h-full object-cover saturate-[0.85] hover:saturate-100 transition-all duration-700 ease-in-out"
             />
             <div className="absolute top-6 right-6 md:bottom-6 md:right-auto md:left-6 bg-white/90 backdrop-blur px-6 py-2 z-10">
               <span className="text-xs font-bold tracking-[0.2em] uppercase">The Atelier</span>

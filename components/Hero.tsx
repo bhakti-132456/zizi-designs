@@ -16,7 +16,7 @@ const Hero: React.FC<HeroProps> = ({ onNavigateProduct }) => {
       {/* Background Image - Immersive Experience */}
       <div className="absolute inset-0 z-0">
         <picture>
-          <source srcSet="/zizi-webp/eloise-mobile.webp" media="(max-width: 768px)" />
+          <source srcSet="/images/home/hero-mobile.jpg" media="(max-width: 768px)" />
           <img
             src="/zizi-webp/dior-eloise-hero.webp"
             alt="Dior – Éloise"
@@ -53,10 +53,6 @@ const Hero: React.FC<HeroProps> = ({ onNavigateProduct }) => {
         </div>
       </div>
 
-      {/* Scroll Indicator */}
-      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-4 opacity-40">
-        <div className="w-[1px] h-12 bg-gradient-to-b from-white/0 via-white to-white/0 animate-scroll-line" />
-      </div>
     </section>
   );
 };

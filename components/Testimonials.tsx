@@ -15,12 +15,12 @@ const testimonials: Testimonial[] = [
   {
     quote: "We weren't expecting something this unique. It's become a conversation starter.",
     author: "The Marshalls",
-    image: "/zizi-webp/collector-fendi-vittoria.webp"
+    image: "/uploaded_image_0_1768224388234.png"
   },
   {
     quote: "Clean, bold, and beautifully made. Feels like something from a gallery.",
     author: "Daniel Reid",
-    image: "/zizi-webp/collector-lv-aurele.webp"
+    image: "/uploaded_image_1_1768224388234.jpg"
   }
 ];
 

@@ -15,7 +15,6 @@ import CardScrollSection from './components/CardScrollSection';
 
 // Lazy-loaded heavy components for code splitting
 const FullCollection = lazy(() => import('./components/FullCollection'));
-const Inspiration = lazy(() => import('./components/Inspiration'));
 const AboutPage = lazy(() => import('./components/AboutPage'));
 const ProductDetailPage = lazy(() => import('./components/ProductDetailPage'));
 const CartPage = lazy(() => import('./components/CartPage'));
@@ -33,7 +32,7 @@ const PageLoader = () => (
 );
 
 export default function App() {
-  const [currentView, setCurrentView] = useState<'home' | 'collection' | 'inspiration' | 'about' | 'product' | 'cart' | 'thank-you' | 'checkout'>('home');
+  const [currentView, setCurrentView] = useState<'home' | 'collection' | 'about' | 'product' | 'cart' | 'thank-you' | 'checkout'>('home');
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const [scrollProgress, setScrollProgress] = useState(0);
   const [currentProductSlug, setCurrentProductSlug] = useState<string | null>(null);
@@ -112,7 +111,7 @@ export default function App() {
     return () => observer.disconnect();
   }, [currentView]);
 
-  const navigateTo = (view: 'home' | 'collection' | 'inspiration' | 'about' | 'cart' | 'checkout' | 'thank-you') => {
+  const navigateTo = (view: 'home' | 'collection' | 'about' | 'cart' | 'checkout' | 'thank-you') => {
     window.history.pushState({}, '', view === 'home' ? '/' : `/${view}`);
     window.scrollTo({ top: 0, behavior: 'smooth' });
     setCurrentView(view);
@@ -248,9 +247,7 @@ export default function App() {
             </main>
           ) : (
             <div className="pt-20">
-              {currentView === 'inspiration' ? (
-                <Suspense fallback={<PageLoader />}><Inspiration /></Suspense>
-              ) : currentView === 'about' ? (
+              {currentView === 'about' ? (
                 <Suspense fallback={<PageLoader />}><AboutPage /></Suspense>
               ) : currentView === 'cart' ? (
                 <Suspense fallback={<PageLoader />}><CartPage onNavigate={navigateTo} /></Suspense>
